@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.local
+.DS_Store
+training/data/
+training/node_modules/
+*.parquet
+client/public/wasm/

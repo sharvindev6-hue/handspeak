@@ -1,0 +1,19 @@
+{
+  "name": "handspeak",
+  "private": true,
+  "version": "0.1.0",
+  "description": "A real-time two-way bridge between sign language and speech.",
+  "type": "module",
+  "workspaces": [
+    "client"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w client",
+    "build": "npm run build -w client",
+    "preview": "npm run preview -w client",
+    "typecheck": "npm run typecheck -w client",
+    "postinstall": "node scripts/copy-wasm.mjs",
+    "test": "npm run test -w client"
+  },
+  "license": "MIT"
+}

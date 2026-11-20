@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HANDSPEAK — sign ↔ speech bridge</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <h1>HAND<span>SPEAK</span></h1>
+        <p class="tagline">A real-time two-way bridge between sign language and speech.</p>
+      </div>
+      <nav class="tabs">
+        <button id="tab-conversation" class="tab active">Conversation</button>
+        <button id="tab-studio" class="tab">Studio</button>
+      </nav>
+      <div id="status" class="status loading">loading…</div>
+    </header>
+
+    <!-- ============ CONVERSATION ============ -->
+    <main id="view-conversation">
+      <section class="panel sign-panel">
+        <div class="panel-head">
+          <h2>🤟 You sign</h2>
+          <div class="toolbar">
+            <button id="btn-camera" class="mode">📷 Camera</button>
+            <button id="btn-image" class="mode active">🖼️ Image</button>
+            <button id="btn-upload">Upload</button>
+            <button id="btn-test">Test image</button>
+            <input type="file" id="file-input" accept="image/*" hidden />
+          </div>
+        </div>
+        <div class="stage" id="stage">
+          <video id="video" playsinline muted hidden></video>
+          <img id="image" alt="hand input" hidden />
+          <canvas id="overlay"></canvas>
+          <div id="stage-hint">Loading a test hand…</div>
+        </div>
+        <div class="spell-hud">
+          <div class="letter-lock">
+            <svg viewBox="0 0 64 64" class="ring">
+              <circle cx="32" cy="32" r="28" class="ring-bg"></circle>
+              <circle cx="32" cy="32" r="28" class="ring-fg" id="lock-ring"></circle>
+            </svg>
+            <div id="big-letter">–</div>
+          </div>
+          <div class="spell-info">
+            <div class="candidates" id="candidates">waiting for a hand…</div>
+            <div class="word-built"><span id="word-built"></span><span class="cursor">▌</span></div>
+            <div class="meters">
+              <div class="meter"><label>confidence</label><div class="bar"><div id="conf-bar"></div></div></div>
+              <div class="meter"><label>word pause</label><div class="bar"><div id="gap-bar"></div></div></div>
+            </div>
+            <div class="manual">
+              <button id="btn-commit-letter">＋ letter</button>
+              <button id="btn-commit-word">＋ word ⏎</button>
+              <button id="btn-backspace">⌫</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel avatar-panel">
+        <div class="panel-head">
+          <h2>🤖 Signs back</h2>
+          <button id="btn-voice" class="mode active" title="Speak recognized words aloud">🔊 voice on</button>
+        </div>
+        <div class="avatar-stage"><canvas id="avatar"></canvas></div>
+        <div id="avatar-caption" class="caption">ready — type or speak, and I'll sign it back</div>
+        <div class="voice-row">
+          <input id="text-input" type="text" placeholder="Type something to sign… e.g. HELLO" autocomplete="off" />
+          <button id="btn-mic" title="Speak (Chrome)">🎤</button>
+          <button id="btn-sign-it" class="primary">Sign it ➤</button>
+        </div>
+        <div class="quick-words" id="quick-words"></div>
+      </section>
+
+      <section class="panel transcript-panel">
+        <div class="panel-head">
+          <h2>💬 Conversation</h2>
+          <button id="btn-clear-transcript">Clear</button>
+        </div>
+        <div id="transcript" class="transcript">
+          <div class="bubble system">Welcome to HANDSPEAK. Sign at the camera (or load an image) — letters lock in after a steady hold, and a pause sends the word. On the right, type or speak and the robot signs back.</div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ============ STUDIO (data + model tools) ============ -->
+    <main id="view-studio" hidden>
+      <section class="panel">
+        <div class="panel-head"><h2>📦 Dataset recorder</h2></div>
+        <p class="muted">Capture normalized hand-shape samples from the camera or any image. These train our own letter classifier.</p>
+        <div class="studio-grid">
+          <div>
+            <label for="letter">Letter label</label>
+            <select id="letter"></select>
+            <button id="btn-add-sample">➕ Add current frame as sample</button>
+            <button id="btn-record">⏺ Record 30 frames (camera)</button>
+            <div id="rec-progress" class="muted"></div>
+            <button id="btn-download">⬇ Download dataset JSON</button>
+            <button id="btn-clear" class="danger">Clear dataset</button>
+          </div>
+          <div>
+            <h3>Samples collected</h3>
+            <div id="counts" class="counts muted">none yet</div>
+            <h3>Model</h3>
+            <div id="model-info" class="muted">loading…</div>
+            <h3>Build tools</h3>
+            <p class="muted">
+              <a href="/poses.html" target="_blank">Pose contact sheet</a> ·
+              <a href="/extract.html" target="_blank">Bulk landmark extraction</a>
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      HANDSPEAK · built by Sharvin · UofTHacks 14 application project ·
+      hand tracking: MediaPipe (Apache-2.0) · letter classifier: trained in-house from scratch · MIT
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

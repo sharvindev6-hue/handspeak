@@ -1,0 +1,17 @@
+{
+  "name": "handspeak-training",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Data extraction + from-scratch MLP training for the HANDSPEAK letter classifier (CPU-only).",
+  "scripts": {
+    "export": "node export_images.mjs",
+    "manifest": "node make_manifest.mjs",
+    "normalize": "npx esbuild ../client/src/normalize.ts --format=esm --outfile=normalize.mjs",
+    "train": "node train.mjs"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.14",
+    "hyparquet": "^1.33.1"
+  }
+}

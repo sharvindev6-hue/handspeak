@@ -375,7 +375,7 @@ export class Avatar {
   signText(text: string, ev: AvatarEvents = {}) {
     this.events = ev;
     this.queue = [];
-    const words = text.toUpperCase().replace(/[^A-Z ]/g, '').split(/\s+/).filter(Boolean);
+    const words = text.toUpperCase().replace(/[^A-Z \-]/g, '').split(/\s+/).filter(Boolean);
     for (const w of words) {
       if (WORD_SIGNS[w]) {
         const track = WORD_SIGNS[w];

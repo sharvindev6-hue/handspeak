@@ -7,110 +7,148 @@
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <header>
+    <!-- icon system: one stroke weight, drawn not emoji -->
+    <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="i-logo" viewBox="0 0 24 24"><path d="M7.5 11.5V5.8a1.3 1.3 0 0 1 2.6 0v4.4M10.1 10.2V4.3a1.3 1.3 0 0 1 2.6 0v5.4M12.7 10V5.2a1.3 1.3 0 0 1 2.6 0v5.6M15.3 10.8V7a1.3 1.3 0 0 1 2.6 0v6.8c0 3.6-2.4 6.2-6 6.2-2.8 0-4.4-1.4-5.6-3.8L4.6 12.7a1.25 1.25 0 0 1 2.1-1.35l.8 1.15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 8.5A2.5 2.5 0 0 1 5.5 6h2L9 4h6l1.5 2h2A2.5 2.5 0 0 1 21 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 16.5z M12 15.5a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="9" cy="10" r="1.8" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M4.5 17.5l4.8-4.6 3.4 3.2 3-2.8 3.8 3.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V4.5M8 8l4-3.5L16 8M4.5 15.5v2.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3.5" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v2.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+      <symbol id="i-backspace" viewBox="0 0 24 24"><path d="M8.5 5.5h11a1.5 1.5 0 0 1 1.5 1.5v10a1.5 1.5 0 0 1-1.5 1.5h-11L3 12zM11.5 9.5l5 5M16.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5zM15.5 9a4.2 4.2 0 0 1 0 6M18 6.8a7.4 7.4 0 0 1 0 10.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5zM16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-hand" viewBox="0 0 24 24"><path d="M7.5 11.5V5.8a1.3 1.3 0 0 1 2.6 0v4.4M10.1 10.2V4.3a1.3 1.3 0 0 1 2.6 0v5.4M12.7 10V5.2a1.3 1.3 0 0 1 2.6 0v5.6M15.3 10.8V7a1.3 1.3 0 0 1 2.6 0v6.8c0 3.6-2.4 6.2-6 6.2-2.8 0-4.4-1.4-5.6-3.8L4.6 12.7a1.25 1.25 0 0 1 2.1-1.35l.8 1.15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H9l-5 4z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+      <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9.5 3.5h5M10.5 3.5v5.2L4.8 18a2 2 0 0 0 1.8 3h10.8a2 2 0 0 0 1.8-3l-5.7-9.3V3.5M7.5 14.5h9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 6.5h15M9 6.5V4.8A1.3 1.3 0 0 1 10.3 3.5h3.4A1.3 1.3 0 0 1 15 4.8v1.7M6.5 6.5l.8 12a2 2 0 0 0 2 1.9h5.4a2 2 0 0 0 2-1.9l.8-12M10 10.5v6M14 10.5v6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="i-enter" viewBox="0 0 24 24"><path d="M20 5v6a3 3 0 0 1-3 3H5M8.5 10.5L5 14l3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    </svg>
+
+    <header class="topbar">
       <div class="brand">
-        <h1>HAND<span>SPEAK</span></h1>
-        <p class="tagline">A real-time two-way bridge between sign language and speech.</p>
+        <span class="brand-mark"><svg class="ic"><use href="#i-logo"/></svg></span>
+        <span class="brand-name">HANDSPEAK</span>
+        <span class="brand-sub">sign ↔ speech bridge</span>
       </div>
-      <nav class="tabs">
+      <nav class="tabs" aria-label="Views">
         <button id="tab-conversation" class="tab active">Conversation</button>
         <button id="tab-studio" class="tab">Studio</button>
       </nav>
-      <div id="status" class="status loading">loading…</div>
+      <div id="status" class="status loading"><span class="dot"></span><span class="status-text">loading…</span></div>
     </header>
 
-    <!-- ============ CONVERSATION ============ -->
     <main id="view-conversation">
-      <section class="panel sign-panel">
-        <div class="panel-head">
-          <h2>🤟 You sign</h2>
-          <div class="toolbar">
-            <button id="btn-camera" class="mode">📷 Camera</button>
-            <button id="btn-image" class="mode active">🖼️ Image</button>
-            <button id="btn-upload">Upload</button>
-            <button id="btn-test">Test image</button>
-            <input type="file" id="file-input" accept="image/*" hidden />
-          </div>
-        </div>
-        <div class="stage" id="stage">
+      <!-- INPUT STAGE -->
+      <section class="stage-col">
+        <div class="channel-head"><h2><span class="ch-dot sign"></span>Sign channel</h2><span class="hint">hold a letter steady · pause to send</span></div>
+        <div class="viewport" id="stage">
           <video id="video" playsinline muted hidden></video>
-          <img id="image" alt="hand input" hidden />
+          <img id="image" alt="Hand input" hidden />
           <canvas id="overlay"></canvas>
-          <div id="stage-hint">Loading a test hand…</div>
+          <div class="vignette"></div>
+          <div id="stage-hint" class="stage-hint">Loading a test hand…</div>
+
+          <div class="vp-top">
+            <div class="segmented" role="group" aria-label="Input source">
+              <button id="btn-camera" class="seg"><svg class="ic"><use href="#i-camera"/></svg>Camera</button>
+              <button id="btn-image" class="seg active"><svg class="ic"><use href="#i-image"/></svg>Image</button>
+            </div>
+            <div class="vp-actions">
+              <button id="btn-upload" class="icon-btn" title="Upload an image" aria-label="Upload image"><svg class="ic"><use href="#i-upload"/></svg></button>
+              <button id="btn-test" class="icon-btn" title="Load a sample hand" aria-label="Load sample image"><svg class="ic"><use href="#i-image"/></svg></button>
+              <input type="file" id="file-input" accept="image/*" hidden />
+            </div>
+          </div>
+
+          <div class="vp-hud">
+            <div class="hud-letter">
+              <svg viewBox="0 0 64 64" class="ring" aria-hidden="true">
+                <circle cx="32" cy="32" r="28" class="ring-bg"></circle>
+                <circle cx="32" cy="32" r="28" class="ring-fg" id="lock-ring"></circle>
+              </svg>
+              <div id="big-letter">–</div>
+            </div>
+            <div class="hud-body">
+              <div id="word-built" class="word-tiles" aria-live="polite"></div>
+              <div class="hud-meta">
+                <span id="candidates" class="candidates">waiting for a hand</span>
+                <span class="meter"><span class="meter-label">confidence</span><span class="bar"><span id="conf-bar"></span></span></span>
+                <span class="meter"><span class="meter-label">pause → send</span><span class="bar"><span id="gap-bar"></span></span></span>
+              </div>
+            </div>
+            <div class="hud-actions">
+              <button id="btn-commit-letter" class="chip" title="Commit current letter"><svg class="ic"><use href="#i-plus"/></svg>letter</button>
+              <button id="btn-commit-word" class="chip" title="Send word"><svg class="ic"><use href="#i-enter"/></svg>send</button>
+              <button id="btn-backspace" class="chip" title="Delete last letter" aria-label="Backspace"><svg class="ic"><use href="#i-backspace"/></svg></button>
+            </div>
+          </div>
         </div>
-        <div class="spell-hud">
-          <div class="letter-lock">
-            <svg viewBox="0 0 64 64" class="ring">
-              <circle cx="32" cy="32" r="28" class="ring-bg"></circle>
-              <circle cx="32" cy="32" r="28" class="ring-fg" id="lock-ring"></circle>
-            </svg>
-            <div id="big-letter">–</div>
-          </div>
-          <div class="spell-info">
-            <div class="candidates" id="candidates">waiting for a hand…</div>
-            <div class="word-built"><span id="word-built"></span><span class="cursor">▌</span></div>
-            <div class="meters">
-              <div class="meter"><label>confidence</label><div class="bar"><div id="conf-bar"></div></div></div>
-              <div class="meter"><label>word pause</label><div class="bar"><div id="gap-bar"></div></div></div>
-            </div>
-            <div class="manual">
-              <button id="btn-commit-letter">＋ letter</button>
-              <button id="btn-commit-word">＋ word ⏎</button>
-              <button id="btn-backspace">⌫</button>
-            </div>
-          </div>
+        <div class="telemetry">
+          <div class="tele-card"><div class="tele-label">Letters locked</div><div class="tele-value signal" id="tele-letters">0</div></div>
+          <div class="tele-card"><div class="tele-label">Words sent</div><div class="tele-value" id="tele-words">0</div></div>
+          <div class="tele-card"><div class="tele-label">Session</div><div class="tele-value" id="tele-time">00:00</div></div>
         </div>
       </section>
 
-      <section class="panel avatar-panel">
-        <div class="panel-head">
-          <h2>🤖 Signs back</h2>
-          <button id="btn-voice" class="mode active" title="Speak recognized words aloud">🔊 voice on</button>
+      <!-- ROBOT STAGE -->
+      <section class="robot-col">
+        <div class="channel-head"><h2><span class="ch-dot voice"></span>Voice channel</h2><span class="hint">type or speak — the interpreter signs back</span></div>
+        <div class="robot-stage">
+          <div class="spotlight"></div>
+          <canvas id="avatar"></canvas>
+          <div class="lower-third">
+            <span class="lt-label">interpreter</span>
+            <span id="avatar-caption" class="caption">Ready. Type or speak — I'll sign it back.</span>
+          </div>
         </div>
-        <div class="avatar-stage"><canvas id="avatar"></canvas></div>
-        <div id="avatar-caption" class="caption">ready — type or speak, and I'll sign it back</div>
-        <div class="voice-row">
-          <input id="text-input" type="text" placeholder="Type something to sign… e.g. HELLO" autocomplete="off" />
-          <button id="btn-mic" title="Speak (Chrome)">🎤</button>
-          <button id="btn-sign-it" class="primary">Sign it ➤</button>
+        <div class="composer">
+          <button id="btn-voice" class="icon-btn voice active" title="Toggle spoken output" aria-label="Toggle voice"><svg class="ic ic-on"><use href="#i-sound"/></svg><svg class="ic ic-off"><use href="#i-mute"/></svg></button>
+          <input id="text-input" type="text" placeholder="Type something to sign…" autocomplete="off" aria-label="Text to sign" />
+          <button id="btn-mic" class="icon-btn" title="Speak (Chrome)" aria-label="Speak"><svg class="ic"><use href="#i-mic"/></svg></button>
+          <button id="btn-sign-it" class="send" aria-label="Sign it"><svg class="ic"><use href="#i-send"/></svg></button>
         </div>
-        <div class="quick-words" id="quick-words"></div>
+        <div class="quick-words" id="quick-words" aria-label="Quick signs"></div>
       </section>
 
-      <section class="panel transcript-panel">
-        <div class="panel-head">
-          <h2>💬 Conversation</h2>
-          <button id="btn-clear-transcript">Clear</button>
+      <!-- TRANSCRIPT -->
+      <section class="transcript-section">
+        <div class="section-head">
+          <h2><svg class="ic"><use href="#i-chat"/></svg>Conversation</h2>
+          <button id="btn-clear-transcript" class="ghost"><svg class="ic"><use href="#i-trash"/></svg>Clear</button>
         </div>
         <div id="transcript" class="transcript">
-          <div class="bubble system">Welcome to HANDSPEAK. Sign at the camera (or load an image) — letters lock in after a steady hold, and a pause sends the word. On the right, type or speak and the robot signs back.</div>
+          <div class="bubble system">Sign at the camera — letters lock after a steady hold, a pause sends the word. On the right, type or speak and the interpreter signs back.</div>
         </div>
       </section>
     </main>
 
-    <!-- ============ STUDIO (data + model tools) ============ -->
     <main id="view-studio" hidden>
-      <section class="panel">
-        <div class="panel-head"><h2>📦 Dataset recorder</h2></div>
-        <p class="muted">Capture normalized hand-shape samples from the camera or any image. These train our own letter classifier.</p>
+      <section class="studio">
+        <div class="section-head">
+          <h2><svg class="ic"><use href="#i-flask"/></svg>Studio — data &amp; model</h2>
+        </div>
         <div class="studio-grid">
-          <div>
+          <div class="studio-card">
+            <h3>Dataset recorder</h3>
+            <p class="muted">Capture canonical hand-shape samples from the camera or any image. These train the letter classifier.</p>
             <label for="letter">Letter label</label>
             <select id="letter"></select>
-            <button id="btn-add-sample">➕ Add current frame as sample</button>
-            <button id="btn-record">⏺ Record 30 frames (camera)</button>
+            <button id="btn-add-sample" class="wide"><svg class="ic"><use href="#i-plus"/></svg>Add current frame</button>
+            <button id="btn-record" class="wide"><svg class="ic"><use href="#i-camera"/></svg>Record 30 frames</button>
             <div id="rec-progress" class="muted"></div>
-            <button id="btn-download">⬇ Download dataset JSON</button>
-            <button id="btn-clear" class="danger">Clear dataset</button>
+            <button id="btn-download" class="wide"><svg class="ic"><use href="#i-upload"/></svg>Download dataset</button>
+            <button id="btn-clear" class="wide danger"><svg class="ic"><use href="#i-trash"/></svg>Clear dataset</button>
           </div>
-          <div>
-            <h3>Samples collected</h3>
+          <div class="studio-card">
+            <h3>Collected samples</h3>
             <div id="counts" class="counts muted">none yet</div>
             <h3>Model</h3>
-            <div id="model-info" class="muted">loading…</div>
+            <div id="model-info" class="muted model-info">loading…</div>
             <h3>Build tools</h3>
-            <p class="muted">
-              <a href="/poses.html" target="_blank">Pose contact sheet</a> ·
+            <p class="muted tools">
+              <a href="/poses.html" target="_blank">Pose contact sheet</a>
               <a href="/extract.html" target="_blank">Bulk landmark extraction</a>
             </p>
           </div>
@@ -118,9 +156,12 @@
       </section>
     </main>
 
-    <footer>
-      HANDSPEAK · built by Sharvin · UofTHacks 14 application project ·
-      hand tracking: MediaPipe (Apache-2.0) · letter classifier: trained in-house from scratch · MIT
+    <footer class="foot">
+      <span>HANDSPEAK · built by Sharvin</span>
+      <span class="foot-sep">·</span>
+      <span>UofTHacks 14</span>
+      <span class="foot-sep">·</span>
+      <span>MediaPipe Apache-2.0 · classifier trained in-house · MIT</span>
     </footer>
 
     <script type="module" src="/src/main.ts"></script>

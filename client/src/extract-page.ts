@@ -34,7 +34,7 @@ const landmarker = await HandLandmarker.createFromOptions(fileset, {
   minHandDetectionConfidence: 0.4,
 });
 
-const samples: { label: string; v: number[]; src: string }[] = [];
+const samples: { label: string; v: number[]; src: string; idx: number }[] = [];
 window.__progress = { done: startIdx, total: manifest.length, detected: 0, failed: 0, finished: false };
 window.__chunk = (i, size) => JSON.stringify(samples.slice(i * size, (i + 1) * size));
 window.__count = () => samples.length;

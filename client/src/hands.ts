@@ -72,25 +72,50 @@ export function drawResult(
   h: number,
 ): void {
   ctx.clearRect(0, 0, w, h);
+  const TIPS = new Set([4, 8, 12, 16, 20]);
   result.landmarks.forEach((hand, hi) => {
     const color = COLORS[hi % COLORS.length];
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    // palm frame: subtle; finger bones: bright with glow
+    const FRAME = new Set(['0-5', '5-9', '9-13', '13-17', '0-17']);
     ctx.strokeStyle = color;
-    ctx.lineWidth = Math.max(2, w / 220);
+    ctx.globalAlpha = 0.3;
+    ctx.lineWidth = Math.max(1.2, w / 380);
     ctx.beginPath();
     for (const [a, b] of HAND_CONNECTIONS) {
+      if (!FRAME.has(`${a}-${b}`)) continue;
       ctx.moveTo(hand[a].x * w, hand[a].y * h);
       ctx.lineTo(hand[b].x * w, hand[b].y * h);
     }
     ctx.stroke();
-    ctx.fillStyle = color;
-    const r = Math.max(3, w / 160);
-    for (const p of hand) {
-      ctx.beginPath();
-      ctx.arc(p.x * w, p.y * h, r, 0, Math.PI * 2);
-      ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 7;
+    ctx.lineWidth = Math.max(1.8, w / 280);
+    ctx.beginPath();
+    for (const [a, b] of HAND_CONNECTIONS) {
+      if (FRAME.has(`${a}-${b}`)) continue;
+      ctx.moveTo(hand[a].x * w, hand[a].y * h);
+      ctx.lineTo(hand[b].x * w, hand[b].y * h);
     }
-    // wrist marker label
-    ctx.font = `${Math.max(12, w / 40)}px Consolas, monospace`;
-    ctx.fillText(`hand ${hi + 1}`, hand[0].x * w + 8, hand[0].y * h - 8);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    // joints: soft halo + bright core, fingertips emphasized
+    const r = Math.max(2.5, w / 200);
+    hand.forEach((p, i) => {
+      const rr = TIPS.has(i) ? r * 1.4 : r;
+      ctx.globalAlpha = 0.16;
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(p.x * w, p.y * h, rr * 2.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.beginPath();
+      ctx.arc(p.x * w, p.y * h, rr, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
   });
 }

@@ -4,6 +4,9 @@
  * text/voice → signing robot (right), with a shared transcript.
  * Studio view: dataset recorder + model info (the training tools).
  */
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/instrument-sans';
+import '@fontsource-variable/jetbrains-mono';
 import { initHands, detectImage, detectVideo, drawResult } from './hands';
 import { normalizeHand, VECTOR_LEN } from './normalize';
 import { loadClassifier, predict, classifierReady, type Prediction } from './classifier';
@@ -48,30 +51,70 @@ let lastFrame = performance.now();
 let avatar: Avatar;
 let listenHandle: ListenHandle | null = null;
 
+let letterCount = 0, wordCount = 0;
 const speller = new Speller({
-  onLetter: () => { wordBuilt.textContent = speller.state.word; },
+  onLetter: () => {
+    renderTiles(speller.state.word);
+    letterCount++;
+    $('tele-letters').textContent = String(letterCount);
+  },
   onWord: (w) => {
-    wordBuilt.textContent = '';
+    renderTiles('');
     addBubble('sign', w);
     speak(w);
+    wordCount++;
+    $('tele-words').textContent = String(wordCount);
   },
 });
 
+const sessionStart = Date.now();
+setInterval(() => {
+  const s = Math.floor((Date.now() - sessionStart) / 1000);
+  $('tele-time').textContent = `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+}, 1000);
+
 function setStatus(text: string, cls: 'loading' | 'ready' | 'error') {
-  statusEl.textContent = text;
+  const t = statusEl.querySelector('.status-text');
+  if (t) t.textContent = text;
   statusEl.className = `status ${cls}`;
 }
 
 function addBubble(kind: 'sign' | 'voice' | 'system', text: string) {
   const div = document.createElement('div');
   div.className = `bubble ${kind}`;
-  div.textContent = text;
+  if (kind !== 'system') {
+    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    icon.setAttribute('class', 'ic');
+    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    use.setAttribute('href', kind === 'sign' ? '#i-hand' : '#i-sound');
+    icon.appendChild(use);
+    div.appendChild(icon);
+  }
+  const body = document.createElement('span');
+  body.className = 'b-text';
+  body.textContent = text;
   const meta = document.createElement('span');
   meta.className = 'meta';
   meta.textContent = new Date().toLocaleTimeString();
-  div.appendChild(meta);
+  body.appendChild(meta);
+  div.appendChild(body);
   transcript.appendChild(div);
   transcript.scrollTop = transcript.scrollHeight;
+}
+
+/** Word tiles — the committed letters, popping in as they lock. */
+function renderTiles(word: string) {
+  if (wordBuilt.dataset.w === word) return;
+  const prev = Number(wordBuilt.dataset.n ?? 0);
+  wordBuilt.dataset.w = word;
+  wordBuilt.dataset.n = String(word.length);
+  wordBuilt.innerHTML = '';
+  for (let i = 0; i < word.length; i++) {
+    const t = document.createElement('span');
+    t.className = 'tile' + (i >= prev ? ' pop' : '');
+    t.textContent = word[i];
+    wordBuilt.appendChild(t);
+  }
 }
 
 // ---------- HUD ----------
@@ -84,7 +127,7 @@ function updateHUD() {
   candidatesEl.textContent = top2.length
     ? top2.map(t => `${t.letter} ${(t.conf * 100).toFixed(0)}%`).join('   ·   ')
     : 'waiting for a hand…';
-  wordBuilt.textContent = s.word;
+  renderTiles(s.word);
   const conf = mode === 'camera' ? s.conf : lastPred?.conf ?? 0;
   confBar.style.width = `${(conf * 100).toFixed(1)}%`;
   gapBar.style.width = `${(s.gapProgress * 100).toFixed(1)}%`;
@@ -107,9 +150,9 @@ async function enterImageMode() {
   $('btn-camera').classList.remove('active');
   stage.classList.remove('mirrored');
   video.hidden = true;
-  setStatus('loading model…', 'loading');
+  setStatus('Loading vision model', 'loading');
   await initHands('IMAGE');
-  setStatus(classifierReady() ? 'ready · image mode' : 'ready · classifier pending', 'ready');
+  setStatus('Live · image', 'ready');
   if (!image.hidden && image.complete) runImage();
 }
 function runImage() {
@@ -146,11 +189,11 @@ async function enterCameraMode() {
   stage.classList.add('mirrored');
   image.hidden = true;
   hint.hidden = true;
-  setStatus('starting camera…', 'loading');
+  setStatus('Starting camera', 'loading');
   try {
     stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
   } catch (err) {
-    setStatus('camera unavailable', 'error');
+    setStatus('Camera unavailable', 'error');
     hint.hidden = false;
     hint.textContent = `Camera error: ${(err as Error).name}. Use image mode instead.`;
     mode = 'image';
@@ -162,7 +205,7 @@ async function enterCameraMode() {
   video.hidden = false;
   await video.play();
   await initHands('VIDEO');
-  setStatus('ready · camera mode', 'ready');
+  setStatus('Live · camera', 'ready');
   sizeOverlay(video.videoWidth, video.videoHeight);
   lastFrame = performance.now();
   const loop = () => {
@@ -209,7 +252,7 @@ function signIt(text: string) {
   avatar.signText(clean, {
     onLetter: (l) => { caption.textContent = `fingerspelling: ${l}`; },
     onWord: (w) => { caption.textContent = `signing: ${w}`; },
-    onDone: () => { caption.textContent = 'ready — type or speak, and I\'ll sign it back'; },
+    onDone: () => { caption.textContent = 'Ready. Type or speak — I\'ll sign it back.'; },
   });
 }
 $('btn-sign-it').addEventListener('click', () => { signIt(textInput.value); textInput.value = ''; });
@@ -218,9 +261,7 @@ textInput.addEventListener('keydown', (e) => {
 });
 $('btn-voice').addEventListener('click', () => {
   setVoiceEnabled(!isVoiceEnabled());
-  const b = $('btn-voice');
-  b.textContent = isVoiceEnabled() ? '🔊 voice on' : '🔇 voice off';
-  b.classList.toggle('active', isVoiceEnabled());
+  $('btn-voice').classList.toggle('active', isVoiceEnabled());
 });
 $('btn-mic').addEventListener('click', () => {
   const btn = $('btn-mic');
@@ -233,7 +274,7 @@ $('btn-mic').addEventListener('click', () => {
   else caption.textContent = 'speech recognition not supported here — type instead (Chrome supports mic)';
 });
 const quick = $('quick-words');
-for (const w of KNOWN_WORDS.slice(0, 9)) {
+for (const w of KNOWN_WORDS.filter(x => x !== 'THANKS').slice(0, 8)) {
   const b = document.createElement('button');
   b.textContent = w;
   b.addEventListener('click', () => signIt(w));
@@ -311,6 +352,7 @@ renderCounts();
 // ---------- boot ----------
 avatar = new Avatar($('avatar') as HTMLCanvasElement);
 window.addEventListener('resize', () => avatar.resize());
+new ResizeObserver(() => avatar.resize()).observe(document.querySelector('.robot-stage')!);
 
 (async () => {
   try {
@@ -324,10 +366,10 @@ window.addEventListener('resize', () => avatar.resize());
     $('model-info').innerHTML =
       `letters.json · val acc <b style="color:var(--accent2)">${((m.valAcc ?? 0) * 100).toFixed(1)}%</b>` +
       ` · top-2 ${((m.valTop2 ?? 0) * 100).toFixed(1)}%<br>MLP 63→128→64→26, trained from scratch (training/train.mjs)`;
-    setStatus(`ready · classifier ${((m.valAcc ?? 0) * 100).toFixed(0)}% acc`, 'ready');
+    setStatus('Live · image', 'ready');
     if (!image.hidden && image.complete) runImage();
   } catch {
     $('model-info').textContent = 'classifier not trained yet — run training pipeline (see training/README.md)';
-    setStatus('ready · classifier pending', 'ready');
+    setStatus('Live · image', 'ready');
   }
 })();

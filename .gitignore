@@ -6,3 +6,4 @@ training/data/
 training/node_modules/
 *.parquet
 client/public/wasm/
+training/extract.log

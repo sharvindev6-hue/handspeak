@@ -4,8 +4,21 @@
 
 Sign at your webcam → HANDSPEAK speaks it out loud. Someone talks back → a 3D robot avatar signs their words. A deaf signer and a hearing speaker hold a live conversation through one screen.
 
-> 🚧 **Status: Day 1 of 5** (Nov 19–24, 2026 build sprint for UofTHacks 14).
-> Hand tracking + dataset recorder are live. Letter classifier lands Day 2, signing avatar Day 3, two-way conversation Day 4.
+> ✅ **Status: feature-complete v1** (built Nov 19, 2026 for UofTHacks 14).
+> Live fingerspelling recognition (**92.1%** held-out accuracy), a signing robot interpreter, and two-way conversation — all in the browser, no backend.
+> **Live demo:** https://sharvindev6-hue.github.io/handspeak/
+
+## Results
+
+| Metric | Value |
+|---|---|
+| Training samples | 8,497 real ASL photos (26 letters, ~325 each) |
+| Held-out top-1 accuracy | **92.08%** |
+| Held-out top-2 accuracy | **97.70%** |
+| Model | MLP 63→128→64→26, trained from scratch in plain JS (Adam) |
+| Runtime | 100% client-side — camera, recognition, speech, 3D avatar |
+
+See [MODEL_CARD.md](MODEL_CARD.md) for per-letter accuracy, confusion matrix, and honest limitations.
 
 ## Why
 
@@ -61,10 +74,10 @@ The hand model (`client/public/models/hand_landmarker.task`) is committed, so th
 ## Roadmap
 
 - [x] Day 1 — hand tracking, normalization, dataset recorder
-- [ ] Day 2 — train letter classifier (CPU), live fingerspelling, model card
-- [ ] Day 3 — signing robot avatar + speech output
-- [ ] Day 4 — two-way conversation + dynamic phrases + demo video
-- [ ] Day 5 — deploy, tests, docs, metrics
+- [x] Day 2 — train letter classifier (CPU), live fingerspelling, model card
+- [x] Day 3 — signing robot avatar + speech output
+- [x] Day 4 — two-way conversation + broadcast-console UI redesign
+- [ ] Day 5 — demo video, final polish
 
 ## Credits
 

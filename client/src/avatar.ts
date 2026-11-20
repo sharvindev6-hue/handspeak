@@ -13,8 +13,8 @@ import * as THREE from 'three';
 import { ALPHABET, REST, ILY, type HandPose } from './poses';
 import { WORD_SIGNS, type WordKeyframe } from './signs';
 
-const BODY = new THREE.MeshStandardMaterial({ color: 0x2b3745, roughness: 0.5, metalness: 0.4 });
-const DARK = new THREE.MeshStandardMaterial({ color: 0x151c26, roughness: 0.7, metalness: 0.2 });
+const BODY = new THREE.MeshStandardMaterial({ color: 0x334152, roughness: 0.38, metalness: 0.55 });
+const DARK = new THREE.MeshStandardMaterial({ color: 0x18212e, roughness: 0.6, metalness: 0.3 });
 const GLOW = new THREE.MeshStandardMaterial({ color: 0x35e0ff, emissive: 0x35e0ff, emissiveIntensity: 1.1, roughness: 0.3 });
 const GLOW_SOFT = new THREE.MeshStandardMaterial({ color: 0x1f6f80, emissive: 0x35e0ff, emissiveIntensity: 0.35, roughness: 0.4 });
 
@@ -35,10 +35,6 @@ export function createHand(): HandRig {
   const palm = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.55, 0.14), BODY);
   palm.position.y = 0.22;
   group.add(palm);
-  const wristRing = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.03, 8, 20), GLOW_SOFT);
-  wristRing.rotation.x = Math.PI / 2;
-  wristRing.position.y = -0.08;
-  group.add(wristRing);
 
   const fingerJoints: THREE.Group[][] = [];
   for (let f = 0; f < 4; f++) {
@@ -160,14 +156,13 @@ export class Avatar {
   constructor(private canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    this.scene.background = new THREE.Color(0x0a0e14);
-    this.scene.fog = new THREE.Fog(0x0a0e14, 7, 13);
+    this.scene.fog = new THREE.Fog(0x070d17, 6.5, 12);
     this.camera = new THREE.PerspectiveCamera(38, 1, 0.1, 50);
-    this.camera.position.set(0.35, 1.75, 4.9);
-    this.camera.lookAt(0.1, 1.35, 0);
+    this.camera.position.set(0.3, 1.5, 3.7);
+    this.camera.lookAt(0.05, 1.18, 0);
 
-    this.scene.add(new THREE.AmbientLight(0x8899bb, 0.7));
-    const key = new THREE.DirectionalLight(0xffffff, 1.6);
+    this.scene.add(new THREE.AmbientLight(0x8899bb, 0.85));
+    const key = new THREE.DirectionalLight(0xffffff, 1.9);
     key.position.set(2.5, 4, 3.5);
     this.scene.add(key);
     const rim = new THREE.PointLight(0x35e0ff, 14, 12);
@@ -176,14 +171,43 @@ export class Avatar {
     const warm = new THREE.PointLight(0xff9a5c, 6, 10);
     warm.position.set(2.8, 0.6, 1.8);
     this.scene.add(warm);
+    const amberRim = new THREE.DirectionalLight(0xffb454, 1.0);
+    amberRim.position.set(-2.2, 2.6, -3);
+    this.scene.add(amberRim);
 
     const grid = new THREE.GridHelper(14, 28, 0x1d3a4a, 0x12202c);
     grid.position.y = 0;
     this.scene.add(grid);
-    const floor = new THREE.Mesh(new THREE.CircleGeometry(7, 48), new THREE.MeshStandardMaterial({ color: 0x0c1219, roughness: 0.9 }));
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(7, 48), new THREE.MeshStandardMaterial({ color: 0x0a1120, roughness: 0.9 }));
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -0.01;
     this.scene.add(floor);
+    // lit dais — the interpreter stands on a broadcast pedestal
+    const dais = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.25, 0.16, 48), new THREE.MeshStandardMaterial({ color: 0x182a44, roughness: 0.5, metalness: 0.4 }));
+    dais.position.y = 0.08;
+    this.scene.add(dais);
+    const daisTop = new THREE.Mesh(new THREE.CircleGeometry(1.05, 48), new THREE.MeshStandardMaterial({ color: 0x1d3350, roughness: 0.45, metalness: 0.4 }));
+    daisTop.rotation.x = -Math.PI / 2;
+    daisTop.position.y = 0.161;
+    this.scene.add(daisTop);
+    const daisRim = new THREE.Mesh(new THREE.TorusGeometry(1.1, 0.022, 10, 64), new THREE.MeshStandardMaterial({ color: 0xffb454, emissive: 0xffb454, emissiveIntensity: 1.25 }));
+    daisRim.rotation.x = Math.PI / 2;
+    daisRim.position.y = 0.165;
+    this.scene.add(daisRim);
+    // soft light pool under the dais
+    const glowCanvas = document.createElement('canvas');
+    glowCanvas.width = glowCanvas.height = 256;
+    const gc = glowCanvas.getContext('2d')!;
+    const grad = gc.createRadialGradient(128, 128, 10, 128, 128, 128);
+    grad.addColorStop(0, 'rgba(255,180,84,0.30)');
+    grad.addColorStop(0.55, 'rgba(255,180,84,0.10)');
+    grad.addColorStop(1, 'rgba(255,180,84,0)');
+    gc.fillStyle = grad;
+    gc.fillRect(0, 0, 256, 256);
+    const pool = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 4.2), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(glowCanvas), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+    pool.rotation.x = -Math.PI / 2;
+    pool.position.y = 0.02;
+    this.scene.add(pool);
 
     // ----- robot body -----
     this.torso = new THREE.Group();
@@ -201,30 +225,30 @@ export class Avatar {
     const hips = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.35, 0.5), DARK);
     hips.position.y = 0.28;
     this.torso.add(hips);
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.15, 0.22, 16), DARK);
-    neck.position.y = 1.72;
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.18, 0.3, 16), DARK);
+    neck.position.y = 1.74;
     this.torso.add(neck);
 
     this.head = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.66, 0.7), BODY);
-    this.head.position.y = 2.12;
+    this.head.position.y = 2.04;
     this.torso.add(this.head);
     const faceCanvas = document.createElement('canvas');
     faceCanvas.width = 256; faceCanvas.height = 200;
     this.faceCtx = faceCanvas.getContext('2d')!;
     this.faceTex = new THREE.CanvasTexture(faceCanvas);
     const face = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.52), new THREE.MeshBasicMaterial({ map: this.faceTex }));
-    face.position.set(0, 2.12, 0.356);
+    face.position.set(0, 2.04, 0.356);
     this.torso.add(face);
     const earL = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.06, 12), GLOW_SOFT);
     earL.rotation.z = Math.PI / 2;
-    earL.position.set(-0.45, 2.12, 0);
+    earL.position.set(-0.45, 2.04, 0);
     this.torso.add(earL);
     const earR = earL.clone(); earR.position.x = 0.45; this.torso.add(earR);
 
     // ----- arms -----
     const mkArm = (side: 1 | -1, shoulderRot: [number, number, number], elbowRot: number) => {
       const shoulder = new THREE.Group();
-      shoulder.position.set(0.72 * side, 1.5, 0);
+      shoulder.position.set(0.78 * side, 1.5, 0);
       shoulder.rotation.set(...shoulderRot);
       const ball = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16), DARK);
       shoulder.add(ball);
@@ -242,6 +266,8 @@ export class Avatar {
       elbow.add(fore);
       const wristFrame = new THREE.Group();
       wristFrame.position.y = -0.55;
+      const wristBall = new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 12), GLOW_SOFT);
+      wristFrame.add(wristBall);
       elbow.add(wristFrame);
       this.torso.add(shoulder);
       return wristFrame;
@@ -409,7 +435,7 @@ export class Avatar {
 
     // idle life
     const t = this.clock.elapsedTime;
-    this.torso.position.y = Math.sin(t * 1.4) * 0.02;
+    this.torso.position.y = 0.05 + Math.sin(t * 1.4) * 0.02;
     this.torso.rotation.y = Math.sin(t * 0.5) * 0.03;
     this.head.rotation.z = Math.sin(t * 0.9) * 0.02;
     this.blinkT -= dt;
